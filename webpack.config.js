@@ -11,9 +11,6 @@ module.exports = {
     port: 9000,
   },
   devtool: false,
-  // externals: {
-  //   lodash: "_",
-  // },
   module: {
     rules: [
       {
