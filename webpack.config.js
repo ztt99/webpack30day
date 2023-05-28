@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin')
+const HtmlWebpackExternalsPlugin = require("html-webpack-externals-plugin");
 
 module.exports = {
   mode: "development",
@@ -18,7 +18,32 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env"],
+            presets: [
+              [
+                "@babel/preset-env",
+                //与@babel/plugin-transform-runtime 不同时使用
+                // {
+                //   useBuiltIns: "entry",
+                //   corejs: "3.22",
+                // },
+              ],
+            ],
+            plugins: [
+              [
+                "@babel/plugin-transform-runtime",
+                {
+                  absoluteRuntime: false,
+                  corejs: false,
+                  // true 提取到全局，不会多次引用  false 只要模块中使用，就引入
+                  // 是否提取单独的方法
+                  helpers: true,
+                  // 是否以不污染全局变量的情况下 转换，就是每个文件都会引入
+                  regenerator: true,
+                  version: "7.0.0-beta.0",
+                },
+              ],
+              ["@babel/plugin-proposal-class-properties"],
+            ],
           },
         },
       },
@@ -54,7 +79,7 @@ module.exports = {
       filename: "[file].map",
     }),
     new webpack.ProvidePlugin({
-      _:'lodash'
+      _: "lodash",
     }),
     new CleanWebpackPlugin({
       cleanOnceBeforeBuildPatterns: ["**/*"],
@@ -63,17 +88,18 @@ module.exports = {
       template: "./src/index.html",
     }),
     new MiniCssExtractPlugin(),
+    // 将外部链接加载到html上
     new HtmlWebpackExternalsPlugin({
-      externals:[
+      externals: [
         {
-          module: 'jquery',
+          module: "jquery",
           entry: {
-            type:'js',
-            path:'http://localhost:8000'
+            type: "js",
+            path: "http://localhost:8000",
           },
-          global: 'jQuery',
+          global: "jQuery",
         },
-      ]
-    })
+      ],
+    }),
   ],
 };
