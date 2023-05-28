@@ -1,2 +1,2 @@
 import './index.css'
-console.log(_);
+console.log(process.env.NODE_ENV);
